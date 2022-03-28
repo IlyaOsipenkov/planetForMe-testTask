@@ -4,7 +4,7 @@
 
 <template>
   <div v-if="downloaded" class="main">
-    <UserCard :key="User.id" v-for="User in users" :userInfo="User"/>
+    <UserCard @delete="deleteUser(index)" :key="User.id" v-for="(User, index) in users" :userInfo="User" :index="index"/>
   </div>
 </template>
 
@@ -83,5 +83,8 @@ export default defineComponent({
   grid-template-rows: repeat(2, 1fr);
   justify-items: center;
   align-items: center;
+  position: relative;
+  gap: 20px;
 }
+
 </style>
