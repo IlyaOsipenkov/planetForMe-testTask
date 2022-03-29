@@ -4,60 +4,75 @@
 
 <template>
   <div v-if="downloaded" class="main">
-    <UserCard @delete="deleteUser(index)" :key="User.id" v-for="(User, index) in users" :userInfo="User" :index="index"/>
+    <UserCard
+      @delete="deleteUser(index)"
+      :key="User.id"
+      v-for="(User, index) in users"
+      :userInfo="User"
+      :index="index"
+    />
   </div>
+  <button class="buttonRefresh" @click="getItems()">Refresh</button>
 </template>
 
 
 
 <script lang="ts">
-import {computed, defineComponent, ref} from 'vue'
-import axios from 'axios'
-import { User } from './models'
-import UserCard from './components/User.vue'
+import { computed, defineComponent, ref } from "vue";
+import axios from "axios";
+import { User } from "./models";
+import UserCard from "./components/User.vue";
 export default defineComponent({
   components: {
-    UserCard
+    UserCard,
   },
   setup() {
-    const downloaded = ref<boolean>(false)
+    const downloaded = ref<boolean>(false);
     const storage = {
       save: function (data: User[]) {
-        localStorage.setItem('key', JSON.stringify(data))
+        localStorage.setItem("key", JSON.stringify(data));
       },
-      get: function(){
-        let data: string | User[] | null = localStorage.getItem('key')
-        if(data != null){
-          return JSON.parse(data)
-        } return null
-      }
-    }
-    function getItems() {
-      let data: User[] | [] = []
-      axios.get('https://reqres.in/api/users?page=2').then(function (response) {
-        for (let i of response.data.data) {
-          let user = new User()
-          user.avatar = i.avatar
-          user.email = i.email
-          user.firstName = i.first_name
-          user.id = i.id
-          user.lastName = i.last_name
-          data = [...data, user]
+      get: function () {
+        let data: string | User[] | null = localStorage.getItem("key");
+        if (data != null) {
+          return JSON.parse(data);
         }
-          storage.save(data)
-          downloaded.value = true
-      })
+        return null;
+      },
+    };
+    function getItems() {
+      let data: User[] | [] = [];
+      axios.get("https://reqres.in/api/users?page=2").then(function (response) {
+        for (let i of response.data.data) {
+          let user = new User();
+          user.avatar = i.avatar;
+          user.email = i.email;
+          user.firstName = i.first_name;
+          user.id = i.id;
+          user.lastName = i.last_name;
+          data = [...data, user];
+        }
+        storage.save(data);
+        downloaded.value = true;
+        users.value = storage.get()
+      });
     }
-    getItems()
-    const users = computed(()=>{
-      console.log(storage.get())
-      return storage.get()
-    })
+    getItems();
+    const users = ref<User[]>(storage.get());
+    function deleteUser(index: number) {
+      let tempUsers = users.value;
+      tempUsers.splice(index, 1);
+      storage.save(tempUsers);
+      users.value = storage.get();
+    }
     return {
-      users, downloaded
-    }
-  } 
-})
+      users,
+      downloaded,
+      deleteUser,
+      getItems
+    };
+  },
+});
 </script>
 
 
@@ -74,7 +89,7 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-.main{
+.main {
   height: 100vh;
   width: 100vw;
   background-color: antiquewhite;
@@ -86,5 +101,11 @@ export default defineComponent({
   position: relative;
   gap: 20px;
 }
-
+.buttonRefresh{
+  position: absolute;
+  width: 100px;
+  height: 60px;
+  top: 15px;
+  left: calc(50vw - 100px / 2);
+}
 </style>

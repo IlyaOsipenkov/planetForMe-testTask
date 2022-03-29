@@ -31,12 +31,12 @@ export default defineComponent({
     },
     setup(props, {emit}){
         const open = ref<boolean>(false)
-        console.log(props.index)
         function deleteUser(index: Number){
             emit("delete", index)
         }
         return{
-            open
+            open,
+            deleteUser
         }
     }
 
