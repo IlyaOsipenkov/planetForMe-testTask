@@ -7,4 +7,5 @@ export class User{
     firstName!: string
     id!: number
     lastName!: string
+    index?: number
 }

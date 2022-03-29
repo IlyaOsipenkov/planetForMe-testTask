@@ -6,13 +6,14 @@
   <div v-if="downloaded" class="main">
     <UserCard
       @delete="deleteUser(index)"
+      @edit="editUser"
       :key="User.id"
       v-for="(User, index) in users"
       :userInfo="User"
       :index="index"
     />
   </div>
-  <button class="buttonRefresh" @click="getItems()">Refresh</button>
+  <button class="buttonRefresh" @click="getItems()">Get from API</button>
 </template>
 
 
@@ -22,12 +23,22 @@ import { computed, defineComponent, ref } from "vue";
 import axios from "axios";
 import { User } from "./models";
 import UserCard from "./components/User.vue";
+import { error } from "console";
 export default defineComponent({
   components: {
     UserCard,
   },
   setup() {
     const downloaded = ref<boolean>(false);
+    function editUser(user: User):void{
+      if(user.index){
+      let allUsers: User[] = users.value
+      allUsers[user.index] = user
+      storage.save(allUsers)
+      }else{
+        throw new Error("user is not defined")
+      }
+    }
     const storage = {
       save: function (data: User[]) {
         localStorage.setItem("key", JSON.stringify(data));
@@ -55,6 +66,8 @@ export default defineComponent({
         storage.save(data);
         downloaded.value = true;
         users.value = storage.get()
+      }).catch(function(error){
+        throw new Error(error)
       });
     }
     getItems();
@@ -69,7 +82,8 @@ export default defineComponent({
       users,
       downloaded,
       deleteUser,
-      getItems
+      getItems,
+      editUser
     };
   },
 });
@@ -92,7 +106,7 @@ export default defineComponent({
 .main {
   height: 100vh;
   width: 100vw;
-  background-color: antiquewhite;
+  background-color: #E5E5E5;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
@@ -102,9 +116,11 @@ export default defineComponent({
   gap: 20px;
 }
 .buttonRefresh{
+  background-color: #F2F3F5;
   position: absolute;
   width: 100px;
   height: 60px;
+  border-radius: 120px;
   top: 15px;
   left: calc(50vw - 100px / 2);
 }
