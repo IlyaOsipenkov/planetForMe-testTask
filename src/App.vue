@@ -5,7 +5,7 @@
 <template>
   <div v-if="downloaded" class="main">
     <UserCard
-      @delete="deleteUser(index)"
+      @delete="deleteUser"
       @edit="editUser"
       :key="User.id"
       v-for="(User, index) in users"
@@ -19,11 +19,10 @@
 
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
 import { User } from "./models";
 import UserCard from "./components/User.vue";
-import { error } from "console";
 export default defineComponent({
   components: {
     UserCard,

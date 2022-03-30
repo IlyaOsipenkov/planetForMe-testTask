@@ -1,6 +1,12 @@
 
 
 <template>
+<!-- При написании кода мне пришлось гуглить много новой информации.  -->
+<!-- Некоторые из концептов с которыми мне пришлось столкнуться кажутся мне сложными. -->
+<!-- Если честно, часть написанного я не понимаю, однако это было интересно и я узнал много нового. -->
+<!-- Не считаю себя сильным front-end разработчиком, но в данный момент я хочу попробовать себя в роли стажера. -->
+
+
 <div class="userWrapper" >
     <img :src="userInfo.avatar">
     <div class="wrapOne">
@@ -25,7 +31,6 @@
 
 <script lang='ts'>
 import { defineComponent, ref } from "vue";
-import { User } from "../models";
 
 export default defineComponent({
     name: 'User',
